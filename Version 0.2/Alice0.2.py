@@ -3,17 +3,7 @@ from AliceGen import AliceGen,LlaveAlice
 from QuantumConversion import QuantumListToStr, QuantumKeyToBits, StringToBinaryList
 from XorEncrypt import *
 from ForLoopEncrypt import *
-##agregar encryptacion por python y por generadores (blocks*llave)
-##Eva sera servidor y cliente
-##agregar cambio de bases en caso de intrusion
-##agregar GUI
-#agregar chat en tiempo real
-#Fix non collapsing of Alice bases with subclasses and generators and fix alice matrix
-#Fix Alice key
-#Improve loops with generators and iterators
-#System check?? with id at first
-#sizeof in buffers bytes
-#choose between random and quantum random and between pycrypto and generic crypto (#FINAL)
+
 
 def Main():
 

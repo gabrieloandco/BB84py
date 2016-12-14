@@ -1,0 +1,25 @@
+agregar encryptacion por python , por generadores y por iteradores (blocks*llave)
+Eva sera servidor y cliente
+agregar cambio de bases en caso de intrusion
+agregar GUI
+agregar chat en tiempo real
+Fix non collapsing of Alice bases with subclasses and generators and fix alice matrix
+Fix Alice key
+Improve loops with generators and iterators
+System check?? with id at first
+sizeof in buffers bytes
+choose between random and quantum random and between pycrypto and generic crypto (#FINAL)
+encrypt blocks by addr or change Matrix class (leak of data)
+add time to the chat and pretty things
+security mecanism against resending AliceM matrix. This can be done avoiding dumps of pickle.
+Avoid saving Alice matrix (probably impossible)
+try with generators and iterators
+Use a med flag in Alice class to avoid further measure (no more than twice) and to avoid Keys
+Use different sockets in Eva client
+Use ForLoop Encrypt with pickle
+Have an option tu use a normal password and then convert it to blocks
+send message and matrix in un pickle package
+research how to create a malicious server that copycats another
+option of calibration with serial bus
+improve self.bases fix
+Perhaps raise exception in str

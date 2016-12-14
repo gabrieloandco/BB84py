@@ -4,7 +4,7 @@ import AliceClass
 import BobGen
 
 def Main():
-	host='192.168.0.17'
+	host='192.168.0.10'
 	port=5000
 	s = socket.socket()
 	s.bind((host,port))
