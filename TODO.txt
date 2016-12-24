@@ -2,17 +2,13 @@ agregar encryptacion por python , por generadores y por iteradores (blocks*llave
 Eva sera servidor y cliente
 agregar cambio de bases en caso de intrusion
 agregar GUI
-agregar chat en tiempo real
 Fix non collapsing of Alice bases with subclasses and generators and fix alice matrix
-Fix Alice key
 Improve loops with generators and iterators
-System check?? with id at first
-sizeof in buffers bytes
 choose between random and quantum random and between pycrypto and generic crypto (#FINAL)
 encrypt blocks by addr or change Matrix class (leak of data)
 add time to the chat and pretty things
 security mecanism against resending AliceM matrix. This can be done avoiding dumps of pickle.
-Avoid saving Alice matrix (probably impossible)
+Avoid saving Alice matrix 
 try with generators and iterators
 Use a med flag in Alice class to avoid further measure (no more than twice) and to avoid Keys
 Use different sockets in Eva client
@@ -23,3 +19,8 @@ research how to create a malicious server that copycats another
 option of calibration with serial bus
 improve self.bases fix
 Perhaps raise exception in str
+add user name
+different sync flags depending on the timne
+option to update the key with a command instead of the clock
+wait until Bob connects to start Eva server
+change stopupdating.clear to receive message function
