@@ -1,11 +1,11 @@
 import socket
 import pickle
-import AliceClass
+from QuantumClasses import Alice
 import threading
 import time
 import select
-from ForLoopEncrypt import *
-from XorEncrypt import * 
+from Encrypt import Encrypt,Decrypt
+
  
 rLock = threading.Lock()
 shutdown = False
@@ -19,14 +19,14 @@ def Calibrate(blocks):
     print "Server started"
     c, addr = s.accept()
     print "Bob address is:" + str(addr)
-    AliceM = AliceClass.Alice(blocks)
+    AliceM = Alice(blocks)
     AliceMbits= pickle.dumps(AliceM)
     c.send(AliceMbits)
     print 'Sent Bases '
     consbits = c.recv(47*(1+blocks)/2)
     print 'Received Coincidences '
     cons = pickle.loads(consbits)
-    keyalice = AliceM.KeyAlice(cons)
+    keyalice = AliceM.Key(cons)
     key = int("0b"+"".join(str(i) for i in keyalice),2)
     print bin(key)
     print "Calibration Over"
@@ -49,7 +49,7 @@ def QuantumChannel(blocks,delay):
         if True: #try:
             rLock.acquire()
             print "Updating"
-            AliceM = AliceClass.Alice(blocks)
+            AliceM = Alice(blocks)
             AliceMbits= pickle.dumps(AliceM)
             qclient.send(AliceMbits)
             print 'Sent Bases '
@@ -58,7 +58,9 @@ def QuantumChannel(blocks,delay):
                 consbits = qclient.recv(47*(1+blocks)/2)
                 cons = pickle.loads(consbits)
                 print 'Received Coincidences '
-                newkey = AliceM.KeyAlice(cons)
+                newkey = AliceM.Key(cons)
+                if newkey == []:
+                    newkey = [0]
                 key = int("0b"+"".join(str(i) for i in newkey),2)
                 qclient.send("Done") 
                 done= qclient.recv(1024)
@@ -85,15 +87,15 @@ def ReceiveMessage(client):
     global key
     while not shutdown:
         stringBob = client.recv(5000)
-        Bobmessage = ForLoopDecrypt(stringBob,key)
+        Bobmessage = Decrypt(stringBob,key)
         rLock.acquire()
         print Bobmessage
         rLock.release()
     client.close()
 
 
-blocks=int(raw_input('give me blocks: '))
-delay = 2
+blocks= int(raw_input('give me blocks: '))
+delay = 10
 keybackup = Calibrate(blocks)
 key = keybackup
 host='192.168.0.18'
@@ -112,7 +114,7 @@ message = ''
 while not quitting: 
     if message != '': 
         stringAlice = "Alice: " + message
-        stringAliceEn = ForLoopEncrypt(stringAlice,key)
+        stringAliceEn = Encrypt(stringAlice,key)
         c.send(stringAliceEn)
     message = raw_input("Alice" + "-> ")
     if message == "quit":
@@ -125,7 +127,6 @@ c.close()
 s.close()
 QC.join()
 rT.join()
-#XorEncrypt(ForLoopEncrypt(message,int(key,2)),int(key,2))
-#ForLoopDecrypt(XorDecrypt(stringBob,int(key,2)),int(key,2))
+
 
 

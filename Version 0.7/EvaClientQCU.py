@@ -1,12 +1,11 @@
 import socket
 import pickle
-import BobClass
+from QuantumClasses import Bob
 import threading
 import time
 import select
+from Encrypt import Decrypt
 import Queue 
-from ForLoopEncrypt import *
-from XorEncrypt import * 
 
 rLock = threading.Lock()
 breaking = False
@@ -75,7 +74,7 @@ def QuantumChannel(blocks,delay,connecttoqeva,connecttoqalice,breakevent):
                 AliceMbits = aliceqsocket.recv(324*(1+blocks)/2)
                 print "Received Alice's bases"
                 AliceM=  pickle.loads(AliceMbits)
-                EvaM = BobClass.Bob(blocks)
+                EvaM = Bob(blocks)
                 ResultM= AliceM.Measure(EvaM)
                 ResultMbits = pickle.dumps(ResultM)
                 tunnelqsocket.send(ResultMbits)
@@ -85,7 +84,9 @@ def QuantumChannel(blocks,delay,connecttoqeva,connecttoqalice,breakevent):
                 aliceqsocket.send(consbits)
                 print "Sent to Alice Bob's Coincidences"
                 cons = pickle.loads(consbits)
-                newkey = EvaM.KeyBob(ResultM,cons)
+                newkey = EvaM.Key(ResultM,cons)
+                if newkey == []:
+                    newkey = [0]
                 key= int("0b"+"".join(str(i) for i in newkey),2)
                 done = aliceqsocket.recv(1024)
                 tunnelqsocket.send(done)
@@ -175,7 +176,7 @@ def DecryptMessage(data):
     
     try:
         print "key: " + str(key)
-        print "message: " + ForLoopDecrypt(data,key)[0:20]
+        print "message: " + Decrypt(data,key)[0:20]
     except:
         print "Couldn't Decrypt"
     else:
@@ -184,7 +185,7 @@ def DecryptMessage(data):
 
 if True:
     blocks=int(raw_input('give me blocks: '))
-    delay = 2
+    delay = 10
     connecttoeva = threading.Event()
     connecttoalice = threading.Event()
     breakevent = threading.Event()

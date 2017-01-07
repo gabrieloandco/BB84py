@@ -1,11 +1,10 @@
 import socket
 import pickle
-import BobClass
+from QuantumClasses import Bob
 import threading
 import time
 import select
-from ForLoopEncrypt import *
-from XorEncrypt import *
+from Encrypt import Encrypt,Decrypt
 
 rLock = threading.Lock()
 shutdown = False  
@@ -20,14 +19,16 @@ def Calibrate(blocks):
     AliceMbits = s.recv(324*(1+blocks)/2)
     print "Received Alice's bases"
     AliceM=  pickle.loads(AliceMbits)
-    BobM = BobClass.Bob(blocks)
+    BobM = Bob(blocks)
     ResultM= AliceM.Measure(BobM)
-    cons = ResultM.Coincidences()
+    cons = BobM.Coincidences(ResultM)
     consbits = pickle.dumps(cons)
     s.send(consbits)
     s.close()
     print "Sent Coincidences"
-    keybob = BobM.KeyBob(ResultM,cons)
+    keybob = BobM.Key(ResultM,cons)
+    if keybob == []:
+        keybob = [0]
     key= int("0b"+"".join(str(i) for i in keybob),2)
     print bin(key)
     print "Calibration Over"
@@ -49,13 +50,15 @@ def UpdateKey(blocks,socket,stop_receiving,stop_updating,start_updating,start_cl
                 AliceMbits = socket.recv(324*(1+blocks)/2)
                 print "Received Alice's bases"
                 AliceM=  pickle.loads(AliceMbits)
-                BobM = BobClass.Bob(blocks)
+                BobM = Bob(blocks)
                 ResultM= AliceM.Measure(BobM)
-                cons = ResultM.Coincidences()
+                cons = BobM.Coincidences(ResultM)
                 consbits = pickle.dumps(cons)
                 socket.send(consbits)
                 print "Sent Coincidences"
-                newkey = BobM.KeyBob(ResultM,cons)
+                newkey = BobM.Key(ResultM,cons)
+                if newkey == []:
+                    newkey = [0]
                 key= int("0b"+"".join(str(i) for i in newkey),2)
                 done = socket.recv(1024)
                 socket.send("Done")
@@ -102,7 +105,7 @@ def ReceiveMessage(socket,stop_receiving,stop_updating):
             stop_receiving.set()
  
         else:
-            Alicemessage = ForLoopDecrypt(stringAlice,key)
+            Alicemessage = Decrypt(stringAlice,key)
             rLock.acquire()
             print Alicemessage
             rLock.release()
@@ -136,7 +139,7 @@ if True:
     while not quitting:     
         if message != '': 
             stringBob = "Bob: " + message
-            stringBobEn = ForLoopEncrypt(stringBob,key)
+            stringBobEn = Encrypt(stringBob,key)
             s.send(stringBobEn)
         message = raw_input("Bob" + "-> ")
         if message == "quit":

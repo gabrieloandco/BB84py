@@ -1,11 +1,10 @@
 import socket
 import pickle
-import BobClass
+from QuantumClasses import Bob
 import threading
 import time
 import select
-from ForLoopEncrypt import *
-from XorEncrypt import * 
+from Encrypt import Encrypt,Decrypt
 
 rLock = threading.Lock()
 shutdown = False
@@ -19,14 +18,16 @@ def Calibrate(blocks):
     AliceMbits = s.recv(324*(1+blocks)/2)
     print "Received Alice's bases"
     AliceM=  pickle.loads(AliceMbits)
-    BobM = BobClass.Bob(blocks)
+    BobM = Bob(blocks)
     ResultM= AliceM.Measure(BobM)
-    cons = ResultM.Coincidences()
+    cons = BobM.Coincidences(ResultM)
     consbits = pickle.dumps(cons)
     s.send(consbits)
     s.close()
     print "Sent Coincidences"
-    keybob = BobM.KeyBob(ResultM,cons)
+    keybob = BobM.Key(ResultM,cons)
+    if keybob == []:
+        keybob = [0]
     key= int("0b"+"".join(str(i) for i in keybob),2)
     print bin(key)
     print "Calibration Over"
@@ -52,13 +53,16 @@ def QuantumChannel(blocks,delay):
                 AliceMbits = qsocket.recv(324*(1+blocks)/2)
                 print "Received Alice's bases"
                 AliceM=  pickle.loads(AliceMbits)
-                BobM = BobClass.Bob(blocks)
+                BobM = Bob(blocks)
                 ResultM= AliceM.Measure(BobM)
-                cons = ResultM.Coincidences()
+                cons = BobM.Coincidences(ResultM)
                 consbits = pickle.dumps(cons)
                 qsocket.send(consbits)
                 print "Sent Coincidences"
-                newkey = BobM.KeyBob(ResultM,cons)
+                newkey = BobM.Key(ResultM,cons)
+                print newkey
+                if newkey == []:
+                    newkey = [0]
                 key= int("0b"+"".join(str(i) for i in newkey),2)
                 done = qsocket.recv(1024)
                 qsocket.send("Done")
@@ -81,7 +85,7 @@ def ReceiveMessage(socket):
     global key
     while not shutdown: 
         stringAlice = socket.recv(5000)
-        Alicemessage = ForLoopDecrypt(stringAlice,key)
+        Alicemessage = Decrypt(stringAlice,key)
         rLock.acquire()
         print Alicemessage
         rLock.release()
@@ -91,7 +95,7 @@ def ReceiveMessage(socket):
 
     
 blocks=int(raw_input('give me blocks: '))
-delay = 2
+delay = 10
 keybackup = Calibrate(blocks)
 key = keybackup
 host='192.168.0.18'
@@ -109,7 +113,7 @@ message = ''
 while not quitting:     
     if message != '': 
         stringBob = "Bob: " + message
-        stringBobEn = ForLoopEncrypt(stringBob,key)
+        stringBobEn = Encrypt(stringBob,key)
         s.send(stringBobEn)
     message = raw_input("Bob" + "-> ")
     if message == "quit":

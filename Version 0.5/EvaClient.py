@@ -2,11 +2,12 @@ import socket
 import pickle
 import BobClass
 from threading import Thread
+import time
 
 def EvaServer(blocks):
 
     #Eva must connect First 
-    host = '192.168.0.14'
+    host = '192.168.0.18'
     port = 5001
     s = socket.socket()
     s.bind((host,port))
@@ -39,13 +40,14 @@ def Main():
     blocks=int(raw_input('give me blocks: '))
     Tunnel = Thread(target=EvaServer, args=(blocks,))
     Tunnel.start()
-    hostAlice='192.168.0.14'
+    hostAlice='192.168.0.18'
     portAlice = 5000
-    hostEva='192.168.0.14'
+    hostEva='192.168.0.18'
     portEva = 5001
     salice = socket.socket()
     seva = socket.socket()
     salice.connect((hostAlice,portAlice))
+    time.sleep(2)
     seva.connect((hostEva,portEva))
     print "Hacking Started"
     if True:

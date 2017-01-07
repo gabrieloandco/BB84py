@@ -4,7 +4,7 @@ import AliceClass
 
 def Main():
     blocks=int(raw_input('give me blocks: '))
-    host='192.168.0.14'
+    host='192.168.0.18'
     port=5000
     s = socket.socket()
     s.bind((host,port))

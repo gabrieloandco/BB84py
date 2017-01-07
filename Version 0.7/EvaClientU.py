@@ -1,12 +1,11 @@
 import socket
 import pickle
-import BobClass
+from QuantumClasses import Bob
 import threading
 import time
 import select
-import Queue 
-from ForLoopEncrypt import *
-from XorEncrypt import * 
+from Encrypt import Decrypt
+import Queue  
 
 rLock = threading.Lock()
 breaking = False
@@ -85,7 +84,7 @@ def DecryptMessage(data,start_updating):
     if not start_updating.is_set():
         try:
             print "key: " + str(key)
-            print "message: " + ForLoopDecrypt(data,key)[0:20]
+            print "message: " + Decrypt(data,key)[0:20]
         except:
             print "Couldn't Decrypt"
     else:
@@ -113,7 +112,7 @@ def UpdateKey(blocks,socketalice,socketeva,stop_receivingbob,stop_receivingeva,s
                 print "Received Alice's bases"
                 print "bases: " + AliceMbits
                 AliceM=  pickle.loads(AliceMbits)
-                BobM = BobClass.Bob(blocks)
+                BobM = Bob(blocks)
                 ResultM= AliceM.Measure(BobM)
                 ResultMbits = pickle.dumps(ResultM)
                 socketeva.send(ResultMbits)
@@ -123,7 +122,9 @@ def UpdateKey(blocks,socketalice,socketeva,stop_receivingbob,stop_receivingeva,s
                 socketalice.send(consbits)
                 print "Sent Coincidences To Alice"
                 cons = pickle.loads(consbits)
-                newkey = BobM.KeyBob(ResultM,cons)
+                newkey = EvaM.Key(ResultM,cons)
+                if newkey == []:
+                    newkey = [0]
                 key= int("0b"+"".join(str(i) for i in newkey),2)
                 done = socketalice.recv(1024)
                 socketeva.send(done)

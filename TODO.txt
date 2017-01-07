@@ -1,7 +1,3 @@
-agregar encryptacion por python , por generadores y por iteradores (blocks*llave)
-Eva sera servidor y cliente
-agregar cambio de bases en caso de intrusion
-agregar GUI
 Fix non collapsing of Alice bases with subclasses and generators and fix alice matrix
 Improve loops with generators and iterators
 choose between random and quantum random and between pycrypto and generic crypto (#FINAL)
@@ -24,3 +20,17 @@ different sync flags depending on the timne
 option to update the key with a command instead of the clock
 wait until Bob connects to start Eva server
 change stopupdating.clear to receive message function
+allow for two listening, if it listens another change to Eva version 0.7
+use argparse version 0.8
+use tkinker version 0.9
+regular expressions for an encrypted flag
+fix shutdown, especially if the quitting flag is raised while updating
+python 2-3 compatibility
+pickle object can be loaded ONCE and can be transfered once in a buffer
+Add Alice security check in KeyBob
+simulate more protocols (pingpong)
+improve random methods
+
+Interface:
+Random Method: quantumrandomgenerator, SystemRandom, Random(default)
+Encryption method: XorEncrypt(default), 
