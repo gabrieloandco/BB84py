@@ -6,7 +6,7 @@ def AcceptEva(salice,eva_accepted):
     ceva, evaaddr = salice.accept()
     print "Eva accepted"
     eva_accepted.set()
-    cbob.shutdown()
+    cbob.close()
     cbob = ceva
     return cbob
 
@@ -16,7 +16,7 @@ port = 5000
 salice.bind((host,port))
 salice.listen(2)
 cbob, bobaddr= salice.accept()
-eva_accepted = threading.Event
+eva_accepted = threading.Event()
 AE = threading.Thread(target=AcceptEva, args = (salice,eva_accepted))
 AE.start()
 

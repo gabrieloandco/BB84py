@@ -30,6 +30,8 @@ pickle object can be loaded ONCE and can be transfered once in a buffer
 Add Alice security check in KeyBob
 simulate more protocols (pingpong)
 improve random methods
+Create a fourth client called SuperEva that completely hacks the system
+Fix problem with chat when eva is connected
 
 Interface:
 Random Method: quantumrandomgenerator, SystemRandom, Random(default)
